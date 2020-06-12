@@ -34,6 +34,12 @@ class Login extends Component {
     //     }
     // }
 
+    componentDidMount = () => {
+        if (this.props.accessToken) {
+            this.props.history.push("/pass/master/tipe-aset")
+        }
+    }
+
     componentWillUnmount = () => {
         this.setState({ active: false })
     }
@@ -183,8 +189,10 @@ class Login extends Component {
                             </div> */}
                         </Col>
                         <Col lg="4" md="12" className="h-100 d-flex bg-white justify-content-center align-items-center">
+
                             <LoadingOverlay tag="div" active={this.state.active} styles={{ overlay: (base) => ({ ...base, background: '#fff', opacity: 0.5 }) }}
                                 spinner={<Loader color="#ffffff" active type={"ball-triangle-path"} />}>
+
                                 <Col lg="9" md="10" sm="12" className="mx-auto app-login-box">
                                     <div className="app-logo" />
                                     <h4 className="mb-0">

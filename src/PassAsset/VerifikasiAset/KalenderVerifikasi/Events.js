@@ -94,8 +94,9 @@ export default [
     {
         id: 13,
         title: 'Multi-day Event',
-        start: new Date(2015, 3, 20, 19, 30, 0),
-        end: new Date(2015, 3, 22, 2, 0, 0),
+        start: new Date(new Date().setHours(new Date().getHours() - 3)),
+        end: new Date(new Date().setHours(new Date().getHours() + 3)),
+        desc: 'Most important meal of the day',
     },
     {
         id: 14,

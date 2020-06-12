@@ -22,7 +22,7 @@ const RefreshRoute = ({ component: Component, accessToken, ...rest }) => (
             <Route
                 {...rest}
                 render={props =>
-                    accessToken ? (console.log('<Redirect to={{ pathname: "/dashboards/analytics" }} />')) : (<Redirect to={{ pathname: "/pages/login" }} />)
+                    accessToken ? (<Redirect to={{ pathname: props.location.pathname }} />) : (<Redirect to={{ pathname: "/pages/login" }} />)
                 }
             />
         </Suspense>
@@ -40,5 +40,5 @@ const mapStateToProps = (state) => {
         }
     }
 }
-
+//props.location.pathname != null ? <Redirect to={{ pathname: props.location.pathname }} /> : <Redirect to={{ pathname: "/dashboards/crm" }} />
 export default connect(mapStateToProps)(withRouter(RefreshRoute));  

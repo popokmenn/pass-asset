@@ -64,7 +64,7 @@ class VerifikasiAset extends React.Component {
                                 <i className="dropdown-icon lnr-chart-bars"> </i>
                                 Dashboard Jadwal
                             </DropdownItem>
-                            <DropdownItem onClick={() => this.props.history.push('/verifikasi/kalender-verifikasi')}>
+                            <DropdownItem onClick={() => this.props.history.push('/pass/verifikasi/kalender-verifikasi')}>
                                 <i className="dropdown-icon lnr-hourglass"> </i>
                                 Kalender Verifikasi
                             </DropdownItem>

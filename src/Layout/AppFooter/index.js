@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import MegaMenuFooter from './Components/FooterMegaMenu';
 import FooterDots from './Components/FooterDots';
 
@@ -8,7 +8,7 @@ class AppFooter extends React.Component {
 
         return (
             <Fragment>
-                <div className="app-footer">
+                {/* <div className="app-footer">
                     <div className="app-footer__inner">
                         <div className="app-footer-left">
                             <FooterDots/>
@@ -17,9 +17,10 @@ class AppFooter extends React.Component {
                             <MegaMenuFooter/>
                         </div>
                     </div>
-                </div>
+                </div> */}
             </Fragment>
-        )}
+        )
+    }
 }
 
 export default AppFooter;

@@ -34,7 +34,7 @@ axios.interceptors.request.use(req => {
 })
 
 axios.interceptors.response.use(res => {
-    console.log(res.data)
+    // console.log(res.data)
     return res
 }, error => {
     console.log(error)

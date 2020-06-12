@@ -17,31 +17,31 @@ class MasterData extends React.Component {
                             <FontAwesomeIcon className="ml-2 opacity-5" icon={faAngleDown} />
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-rounded dropdown-menu-lg rm-pointers">
-                            <DropdownItem onClick={() => this.props.history.push('/pass/tipe-aset')}>
+                            <DropdownItem onClick={() => this.props.history.push('/pass/master/tipe-aset')}>
                                 <i className="dropdown-icon lnr-magic-wand"> </i>
                                 Tipe Aset
                             </DropdownItem>
-                            <DropdownItem onClick={() => this.props.history.push('/pass/golongan')}>
+                            <DropdownItem onClick={() => this.props.history.push('/pass/master/golongan')}>
                                 <i className="dropdown-icon lnr-flag"> </i>
                                 Golongan
                             </DropdownItem>
-                            <DropdownItem onClick={() => this.props.history.push('/pass/bagian')}>
+                            <DropdownItem onClick={() => this.props.history.push('/pass/master/bagian')}>
                                 <i className="dropdown-icon lnr-star-half"> </i>
                                 Bagian
                             </DropdownItem>
-                            <DropdownItem onClick={() => this.props.history.push('/pass/penilaian-aset')}>
+                            <DropdownItem onClick={() => this.props.history.push('/pass/master/penilaian-aset')}>
                                 <i className="dropdown-icon lnr-pencil"> </i>
                                 Penilaian Aset
                             </DropdownItem>
-                            <DropdownItem onClick={() => this.props.history.push('/pass/lokasi-rantai-pasok')}>
+                            <DropdownItem onClick={() => this.props.history.push('/pass/master/lokasi-rantai-pasok')}>
                                 <i className="dropdown-icon lnr-map-marker"> </i>
                                 Lokasi Rantai Aset
                             </DropdownItem>
-                            <DropdownItem onClick={() => this.props.history.push('/pass/gedung-aset')}>
+                            <DropdownItem onClick={() => this.props.history.push('/pass/master/gedung-aset')}>
                                 <i className="dropdown-icon lnr-apartment"> </i>
                                 Gedung Aset
                             </DropdownItem>
-                            <DropdownItem onClick={() => this.props.history.push('/pass/ruang-aset')}>
+                            <DropdownItem onClick={() => this.props.history.push('/pass/master/ruang-aset')}>
                                 <i className="dropdown-icon lnr-store"> </i>
                                 Ruang Aset
                             </DropdownItem>

@@ -201,7 +201,7 @@ const AppMain = () => {
                     </div>
                 </div>
             }>
-                <Route path="/pass" component={MasterData} />
+                <Route path="/pass/master" component={MasterData} />
             </Suspense>
 
             {/* -- PUNYA PASS -- */}
@@ -218,13 +218,13 @@ const AppMain = () => {
                     </div>
                 </div>
             }>
-                <Route path="/verifikasi" component={VerifikasiAset} />
+                <Route path="/pass/verifikasi" component={VerifikasiAset} />
             </Suspense>
 
-            <RefreshRoute path="/" component={Login} />
-            <RefreshRoute path="/dashboards" component={Login} />
-            <RefreshRoute path="/pass" component={Login} />
-            <RefreshRoute path="/pages" component={DashboardsAnalytics} />
+            <RefreshRoute path="/" />
+            <RefreshRoute path="/dashboards" />
+            <RefreshRoute path="/pass" />
+            <RefreshRoute path="/pages" />
 
 
             <ToastContainer />

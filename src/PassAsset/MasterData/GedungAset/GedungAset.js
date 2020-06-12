@@ -1,33 +1,110 @@
+import axios from 'axios';
 import React, { Component, Fragment } from 'react';
 import ReactTable from "react-table";
+import { toast } from 'react-toastify';
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
-import { Button, Card, CardBody, Col, Row, Modal, ModalBody, ModalHeader, ModalFooter, FormGroup, Form, Label, Input, CardHeader } from 'reactstrap';
-import { makeData } from "./utils";
+import { Button, Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import LoadingOverlay from 'react-loading-overlay'
+import { Loader } from 'react-loaders';
 
 export default class GedungAset extends Component {
 
     gedungAsetData = {
         kode: null,
         nama: null,
-        bagian: null
+        otherAttributes: null,
+        type: "ASSET_TYPE",
+        deleteId: undefined,
+        isSubmit: false
     }
 
-    constructor() {
-        super();
+    getAll = () => {
+        this.setState({ loading: true })
+        axios.get('http://localhost:9090/manset/ref/')
+            .then((response) => {
+                this.setState({ ...this.state, data: response.data.data })
+            })
+            .catch(function (error) {
+                console.log(error); // handle error
+            })
+            .finally(() => {
+                this.setState({ loading: false })
+            })
+    }
+
+    componentDidMount = () => {
+        this.getAll()
+    }
+
+    constructor(props) {
+        super(props);
         this.state = {
-            data: makeData(),
             modal: false,
-            modalDelete: false
+            modalDelete: false,
+            tableLoading: false
         };
 
         this.toggle = this.toggle.bind(this);
     }
 
+    handleChange = (e) => {
+        this.gedungAsetData = ({
+            ...this.gedungAsetData,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    onBtnDeleteClick = () => {
+        axios.delete('http://localhost:9090/manset/ref/' + this.gedungAsetData.deleteId)
+            .then((response) => {
+                if (response.data.data === 200) {
+                    toast['success']('Delete Berhasil');
+                } else {
+                    toast['error']('Delete Gagal!');
+                }
+
+            }).catch(function (error) {
+                toast['error']('Delete Gagal!');
+                console.log(error)
+            }).finally(() => {
+                this.getAll()
+                this.gedungAsetData = { ...this.gedungAsetData, deleteId: 0 }
+            });
+
+        this.toggle("modalDelete")
+    }
+
+    onBtnDeleteColumnClick = (data) => {
+        this.gedungAsetData = { ...this.gedungAsetData, deleteId: data.kode }
+        this.toggle("modalDelete")
+    }
+
+    onBtnSubmitClick = () => {
+        axios.post('http://localhost:9090/manset/ref/', this.gedungAsetData)
+            .then((response) => {
+                if (response.data.status === 200) {
+                    toast['success']('Submit Berhasil');
+                } else {
+                    toast['error']('Submit Gagal!');
+                }
+
+            }).catch(function (error) {
+                toast['error']('Submit Gagal!');
+                console.log(error)
+            }).finally(() => {
+                this.getAll()
+            });
+        //this.setState({ ...this.state, loading: false, active: false })
+        this.toggle("modal")
+    }
+
     onBtnEditClick = (data) => {
         this.gedungAsetData = {
+            ...this.gedungAsetData,
             kode: data.kode,
             nama: data.nama,
-            bagian: data.bagian
+            otherAttributes: data.otherAttributes,
+            isSubmit: false
         }
         this.toggle('modal')
     }
@@ -36,7 +113,8 @@ export default class GedungAset extends Component {
         this.gedungAsetData = {
             kode: null,
             nama: null,
-            bagian: null
+            otherAttributes: null,
+            isSubmit: true
         }
         this.toggle("modal")
     }
@@ -55,7 +133,8 @@ export default class GedungAset extends Component {
                 columns: [
                     {
                         Header: "Kode",
-                        accessor: "kode"
+                        id: "kode",
+                        accessor: d => d.kode
                     },
                     {
                         Header: "Nama",
@@ -64,8 +143,9 @@ export default class GedungAset extends Component {
                     },
                     {
                         Header: "Bagian",
-                        id: "bagian",
-                        accessor: d => d.nama
+                        id: "otherAttributes",
+                        accessor: d => d.otherAttributes
+
                     },
                     {
                         Header: "Action",
@@ -77,7 +157,7 @@ export default class GedungAset extends Component {
                                     <i className="pe-7s-magic-wand"></i> Ubah
                                 </Button>
 
-                                <Button color="danger" style={{ marginLeft: "10px" }} onClick={() => this.toggle("modalDelete")}>
+                                <Button color="danger" style={{ marginLeft: "10px" }} onClick={() => this.onBtnDeleteColumnClick(row._original)}>
                                     <i className="pe-7s-trash"></i> Hapus
                                 </Button>
                             </>
@@ -100,22 +180,28 @@ export default class GedungAset extends Component {
                     </div>
                     <Row>
                         <Col md="12">
-                            <Card className="main-card mb-3">
-                                <CardHeader>
-                                    <Button color="info" style={{ marginLeft: "10px" }} onClick={() => this.onBtnAddClick()}>
-                                        <i className="pe-7s-plus"></i> Tambah Data
+
+                            <LoadingOverlay tag="div" active={this.state.loading} styles={{ overlay: (base) => ({ ...base, background: '#fff', opacity: 0.5 }) }}
+                                spinner={<Loader active type={"ball-grid-pulse"} />}>
+                                <Card className="main-card mb-3">
+                                    <CardHeader>
+                                        <Button color="info" style={{ marginLeft: "10px" }} onClick={() => this.onBtnAddClick()}>
+                                            <i className="pe-7s-plus"></i> Tambah Data
                                     </Button>
-                                </CardHeader>
-                                <CardBody>
-                                    <ReactTable
-                                        data={data}
-                                        columns={columns}
-                                        defaultPageSize={10}
-                                        className="-striped -highlight"
-                                        filterable
-                                    />
-                                </CardBody>
-                            </Card>
+                                    </CardHeader>
+                                    <CardBody>
+                                        <ReactTable
+                                            data={data}
+                                            columns={columns}
+                                            defaultPageSize={10}
+                                            className="-striped -highlight"
+                                            filterable
+                                            loading={this.state.loading}
+                                        />
+                                    </CardBody>
+                                </Card>
+                            </LoadingOverlay>
+
                         </Col>
                     </Row>
                 </CSSTransitionGroup>
@@ -125,22 +211,22 @@ export default class GedungAset extends Component {
                     <ModalBody>
                         <Form>
                             <FormGroup>
-                                <Label for="kode">Kode</Label>
-                                <Input type="FormText" value={this.gedungAsetData.kode} name="kode" id="kode" />
+                                {this.gedungAsetData.isSubmit ? <Label for="kode">Kode</Label> : null}
+                                <Input type={this.gedungAsetData.isSubmit ? "formText" : "hidden"} value={this.gedungAsetData.kode} onChange={(e) => this.setState({ ...this.state, deleteId: this.gedungAsetData.kode })} name="kode" id="kode" />
                             </FormGroup>
                             <FormGroup>
                                 <Label for="nama">Nama</Label>
-                                <Input type="FormText" value={this.gedungAsetData.nama} name="nama" id="nama" />
+                                <Input type="FormText" defaultValue={this.gedungAsetData.nama} onChange={(e) => this.handleChange(e)} name="nama" id="nama" />
                             </FormGroup>
                             <FormGroup>
-                                <Label for="bagian">Bagian</Label>
-                                <Input type="FormText" value={this.gedungAsetData.bagian} name="bagian" id="bagian" />
+                                <Label for="otherAttributes">Bagian</Label>
+                                <Input type="FormText" defaultValue={this.gedungAsetData.otherAttributes} onChange={(e) => this.handleChange(e)} name="otherAttributes" id="otherAttributes" />
                             </FormGroup>
                         </Form>
                     </ModalBody>
                     <ModalFooter>
                         <Button color="link" onClick={() => this.toggle("modal")}>Cancel</Button>
-                        <Button color="primary" onClick={() => this.toggle("modal")}>Submit</Button>{' '}
+                        <Button color="primary" onClick={() => this.onBtnSubmitClick()}>Submit</Button>{' '}
                     </ModalFooter>
                 </Modal>
 
@@ -150,8 +236,8 @@ export default class GedungAset extends Component {
                         Hapus Data?
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="link" onClick={() => this.toggle("modalDelete")}>Cancel</Button>
-                        <Button color="primary" onClick={() => this.toggle("modalDelete")}>Submit</Button>{' '}
+                        <Button color="danger" onClick={() => this.toggle("modalDelete")}>Cancel</Button>{' '}
+                        <Button color="link" onClick={() => this.onBtnDeleteClick()}>Delete</Button>
                     </ModalFooter>
                 </Modal>
 

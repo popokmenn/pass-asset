@@ -149,7 +149,7 @@ class ThemeOptions extends Component {
 
         return (
             <div className={"ui-theme-settings " + (showing ? 'settings-open' : '')}>
-                <Button className="btn-open-options" id="TooltipDemo" color="warning" onClick={() => this.setState({ showing: !showing })}>
+                <Button className="hidden" id="TooltipDemo" color="warning" onClick={() => this.setState({ showing: !showing })}>
                     <FontAwesomeIcon icon={faCog}
                         spin
                         color="#573a04"
