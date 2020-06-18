@@ -174,11 +174,11 @@ export default class TipeAset extends Component {
                                     </CardHeader>
                                     <CardBody>
                                         <ReactTable
-                                            data={this.state.movieData}
-                                            columns={columns}
-                                            className="-striped -highlight"
                                             filterable
                                             manual
+                                            columns={columns}
+                                            className="-striped -highlight"
+                                            data={this.state.movieData}
                                             loading={this.state.loading}
                                             onFetchData={this.fetchData}
                                             pages={this.state.pages}

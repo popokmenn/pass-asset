@@ -3,18 +3,56 @@ import ReactTable from "react-table";
 import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 import { Button, Card, CardBody, Col, Row, Modal, ModalBody, ModalHeader, ModalFooter, FormGroup, Form, Label, Input, CardHeader } from 'reactstrap';
 import { makeData } from "./utils";
+import axios from 'axios';
 
 export default class lokasiRantaiPasok extends Component {
 
     lokasiRantaiPasokData = {
         kode: null,
-        nama: null
+        nama: null,
+        searchQuery: ""
+    }
+
+    tableModifier = {
+        pages: 1,
+        totalPage: 20,
+        pageSize: 10,
+        loading: false
+    }
+
+    filterParam = {
+        draw: 2,
+        start: 0,
+        length: 10,
+        search_value__: "",
+        search_regex__: "false",
+
+        columns_0___data__: "RFTPE",
+        columns_0___name__: "",
+        columns_0___searchable__: "true",
+        columns_0___orderable__: "true",
+        columns_0___search___value__: "",
+        columns_0___search___regex__: "false",
+
+        columns_1___data__: "RFKD",
+        columns_1___name__: "",
+        columns_1___searchable__: "true",
+        columns_1___orderable__: "true",
+        columns_1___search___value__: "",
+        columns_1___search___regex__: "false",
+
+        columns_2___data__: "RFNM",
+        columns_2___name__: "",
+        columns_2___searchable__: "true",
+        columns_2___orderable__: "true",
+        columns_2___search___value__: "",
+        columns_2___search___regex__: "false"
     }
 
     constructor() {
         super();
         this.state = {
-            data: makeData(),
+            data: [],
             modal: false,
             modalDelete: false
         };
@@ -22,20 +60,47 @@ export default class lokasiRantaiPasok extends Component {
         this.toggle = this.toggle.bind(this);
     }
 
-    onBtnEditClick = (data) => {
-        this.lokasiRantaiPasokData = {
-            kode: data.kode,
-            nama: data.nama
+    objectToURLParam = (obj) => {
+        var str = "";
+        for (var key in obj) {
+            if (str !== "") {
+                str += "&";
+            }
+            str += key + "=" + encodeURIComponent(obj[key]);
         }
-        this.toggle('modal')
+
+        str = str.replace(/__/gi, "%5D");
+        str = str.replace(/_/gi, "%5B");
+
+        this.lokasiRantaiPasokData = {
+            ...this.lokasiRantaiPasokData,
+            searchQuery: str
+        }
     }
 
-    onBtnAddClick = () => {
-        this.lokasiRantaiPasokData = {
-            kode: null,
-            nama: null
-        }
-        this.toggle("modal")
+    getAll = () => {
+        this.objectToURLParam(this.filterParam)
+        this.tableModifier = { ...this.tableModifier, loading: false }
+        axios.get('http://localhost:9090/manset/datatables/referensi-list?' + this.lokasiRantaiPasokData.searchQuery)
+            .then((response) => {
+                console.log(response)
+                this.setState({ ...this.state, data: response.data.data })
+                this.tableModifier = {
+                    ...this.tableModifier,
+                    totalPage: Math.ceil(response.data.recordsFiltered / this.tableModifier.pageSize),
+                    loading: false
+                }
+            })
+            .catch((error) => {
+                console.log(error); // handle error
+            })
+            .finally(() => {
+                this.tableModifier = { ...this.tableModifier, loading: false }
+            })
+    }
+
+    componentDidMount = () => {
+        this.getAll()
     }
 
     toggle = (modalName) => {
@@ -52,12 +117,12 @@ export default class lokasiRantaiPasok extends Component {
                 columns: [
                     {
                         Header: "Kode",
-                        accessor: "kode"
+                        accessor: "RFKD"
                     },
                     {
                         Header: "Nama",
                         id: "nama",
-                        accessor: d => d.nama
+                        accessor: d => d.RFNM
                     },
                     {
                         Header: "Action",
@@ -100,11 +165,15 @@ export default class lokasiRantaiPasok extends Component {
                                 </CardHeader>
                                 <CardBody>
                                     <ReactTable
+                                        filterable
                                         data={data}
                                         columns={columns}
-                                        defaultPageSize={10}
                                         className="-striped -highlight"
-                                        filterable
+
+                                        loading={this.tableModifier.loading}
+                                        page={this.tableModifier.pages - 1}
+                                        pages={this.tableModifier.totalPage}
+                                        defaultPageSize={this.tableModifier.pageSize}
                                     />
                                 </CardBody>
                             </Card>
@@ -146,5 +215,22 @@ export default class lokasiRantaiPasok extends Component {
             </Fragment>
         )
     }
+
+    onBtnEditClick = (data) => {
+        this.lokasiRantaiPasokData = {
+            kode: data.kode,
+            nama: data.nama
+        }
+        this.toggle('modal')
+    }
+
+    onBtnAddClick = () => {
+        this.lokasiRantaiPasokData = {
+            kode: null,
+            nama: null
+        }
+        this.toggle("modal")
+    }
+
 }
 // getTrProps={onRowClick}

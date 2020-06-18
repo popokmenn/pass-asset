@@ -37,7 +37,7 @@ axios.interceptors.response.use(res => {
     // console.log(res.data)
     return res
 }, error => {
-    console.log(error)
+    // console.log(error)
 
     if (error.response.status !== 401) {
         return new Promise((resolve, reject) => {
